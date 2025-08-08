@@ -2,9 +2,13 @@ const express = require('express');
 const axios = require('axios');
 const app = express();
 const cors = require('cors');
+
 app.use(cors({
-  origin: 'https://www.tentmirador.com'  // permite solo tu dominio
+  origin: 'https://www.tentmirador.com', // tu dominio web
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
 }));
+
 
 app.use(express.json());
 
