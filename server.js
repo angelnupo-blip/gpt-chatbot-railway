@@ -80,7 +80,7 @@ app.post('/chat', async (req, res) => {
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: 'gpt-5', // Cambia aquí el modelo si quieres usar otro
+        model: 'gpt-5', // Cambia aquí si quieres usar otro
         messages: [
           {
             role: 'system',
@@ -89,8 +89,8 @@ Responde con precisión y no inventes datos; usa el contexto cuando aplique.`
           },
           ...(context ? [{ role: 'system', content: `Contexto:\n${context}` }] : []),
           ...messages
-        ],
-        temperature: 0.7
+        ]
+        // Sin temperature para evitar error en gpt-5
       },
       {
         headers: {
@@ -106,8 +106,17 @@ Responde con precisión y no inventes datos; usa el contexto cuando aplique.`
 
   } catch (err) {
     console.error('❌ Error OpenAI:', err.response?.data || err.message);
-    res.status(500).json({ role: 'assistant', content: 'Error al conectar con el modelo. Inténtalo en unos segundos.' });
+    res.status(500).json({
+      role: 'assistant',
+      content: 'Error al conectar con el modelo.',
+      error: err.response?.data || err.message
+    });
   }
+});
+
+// --- Endpoint debug opcional ---
+app.get('/debug', (req, res) => {
+  res.json({ tentInfoChars: tentInfo.length });
 });
 
 // --- Iniciar servidor ---
