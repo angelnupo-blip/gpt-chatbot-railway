@@ -1,14 +1,16 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+const express = require('express');
 
 const app = express();
 
 app.use(cors({
-  origin: 'https://www.tentmirador.com',
+  origin: ['https://www.tentmirador.com', 'https://tentmirador.com'], // permite ambas variantes
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
+
 
 app.use(express.json());
 
