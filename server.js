@@ -1,14 +1,14 @@
 const express = require('express');
 const axios = require('axios');
-const app = express();
 const cors = require('cors');
 
+const app = express();
+
 app.use(cors({
-  origin: 'https://www.tentmirador.com', // tu dominio web
+  origin: 'https://www.tentmirador.com',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
-
 
 app.use(express.json());
 
@@ -22,12 +22,13 @@ app.post('/chat', async (req, res) => {
       'https://api.openai.com/v1/chat/completions',
       {
         model: 'gpt-3.5-turbo',
-
         messages: [
-          { role: 'system', content: 'Eres un GPT personalizado creado por Ángel. Siempre responde con calidez, claridad y conocimiento profundo.' },
+          {
+            role: 'system',
+            content: 'Eres Camila, una guía cálida, amigable y útil creada por Ángel para asistir a los visitantes de Tent Mirador.'
+          },
           ...messages
-        ],
-        temperature: 0.7
+        ]
       },
       {
         headers: {
@@ -37,15 +38,24 @@ app.post('/chat', async (req, res) => {
       }
     );
 
-    res.json(response.data.choices[0].message);
+    const reply = response.data.choices?.[0]?.message?.content;
+    if (reply) {
+      res.json({ role: 'assistant', content: reply });
+    } else {
+      res.status(500).json({ role: 'assistant', content: 'No pude generar una respuesta válida.' });
+    }
+
   } catch (err) {
-    console.error(err.response?.data || err.message);
-    res.status(500).json({ error: 'Error al obtener respuesta de OpenAI' });
+    console.error('❌ Error al consultar OpenAI:', err.response?.data || err.message);
+    res.status(500).json({ role: 'assistant', content: 'Error al conectar con el modelo. Inténtalo más tarde.' });
   }
 });
 
-app.get('/', (req, res) => res.send("Chatbot corriendo correctamente."));
+app.get('/', (req, res) => {
+  res.send("✅ Chatbot Camila corriendo correctamente.");
+});
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Servidor funcionando');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
