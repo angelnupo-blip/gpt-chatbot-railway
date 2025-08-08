@@ -1,6 +1,11 @@
 const express = require('express');
 const axios = require('axios');
 const app = express();
+const cors = require('cors');
+app.use(cors({
+  origin: 'https://www.tentmirador.com'  // permite solo tu dominio
+}));
+
 app.use(express.json());
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
